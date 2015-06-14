@@ -38,8 +38,8 @@ shinyUI(fluidPage(
       conditionalPanel("!output.fileUploaded",
                        p("Welcome to the Language Distance Analyzr web application. This application was developed within the framework of the data-mining course (MTAT.03.183) at the University of Tartu. This tool offers a simple-to-use interface for students, researches and interested persons to concurrently analyze and visualize the lexical similarity of multiple entities such as languages. "),
 						p("To get started, please upload a suitable dataset using the form on the left. "),
-						p("For more information on the project including algorithm and source code check out the "), a("Github repository.", href="https://github.com/jaks6/LangDist"))
-						 ")
+						p("For more information on the project including algorithm and source code check out the "), a("Github repository.", href="https://github.com/jaks6/LangDist")
+						 
                        
                        ),
       
