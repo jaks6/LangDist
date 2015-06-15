@@ -1,6 +1,6 @@
 library(shiny)
 
-shinyUI(fluidPage(
+shinyUI(fluidPage(theme = "bootstrap.css",
   titlePanel("Upload a dataset"),
   sidebarLayout(
     sidebarPanel(
@@ -49,7 +49,7 @@ shinyUI(fluidPage(
         tabsetPanel(type = "tabs", 
                     tabPanel("Data", tableOutput("data"),align="center"), 
                     tabPanel("Distance Graph", 
-                             downloadButton('downloadPDF', 'Download PDF version (higher resolution)'),
+                             #downloadButton('downloadPDF', 'Download PDF version (higher resolution)'),
                              plotOutput("distanceGraph")
                              ), 
                     tabPanel("Distance Matrix", plotOutput("distanceMatrix"),align="center"),

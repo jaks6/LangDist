@@ -70,32 +70,24 @@ shinyServer(function(input, output) {
       return( lv_ratio * lv_dists + lcs_ratio * lcs_dists)
     }
     
-    
-    
-    
-    ##Construct a language-language matrix
-    #dists <- unlist(lapply(seq(1:length(data)), function(x){
-    #  lapply(seq(1:length(data)), function(y) standardDist(data[[x]],data[[y]]))
-    #}))
-    
-    
+
+    ##Construct a language-language matrix    
     distance_mode <- reactive({return(input$dist) })
     if (distance_mode() =="lv"){dists  <- combinedDists(data,1,0); print("LV")}
     else if (distance_mode() =="comb"){dists  <- combinedDists(data,0.4,0.6); print("COMBO")}
     else if (distance_mode() =="lcs"){dists  <- combinedDists(data,0,1); print("LCS")}
     
-
-    M  <- matrix(dists, ncol=length(colnames(data)), nrow=length(colnames(data)), dimnames = list(colnames(data),colnames(data)))
-
+    M  <- matrix(dists, ncol=length(colnames(data)), nrow=length(colnames(data)), dimnames = list(colnames(data),colnames(data)))    
     
     return(M)
   }
   
-
-  
   ##Define the distance matrix as reactive, such that whenever the input changes,
   ## Any plots, etc that use the matrix will also be updated.
-  distMatrix  <- reactive(create_distance_matrix(input$file1))
+  distMatrix  <- reactive(
+    create_distance_matrix(input$file1)
+    
+)
   
   
   output$fileUploaded <- reactive({
@@ -117,9 +109,10 @@ shinyServer(function(input, output) {
   
   ### GRAPH OF DISTANCE ###########
   output$distanceGraph <- renderPlot({
-    withProgress(message = 'Creating plot', value = 0.1, {
-      
+    withProgress(message = 'PROCESSING...', value = 0.1, {
+      incProgress(0.1, detail = "Calculating lexical distances")
       M  <- distMatrix()
+      incProgress(0.5, detail = "Drawing graph of distances")
       dists  <- unlist(as.list(M))
       
       f_  <- function(x){      abs(255 - (255* log10(x)))    }
@@ -145,41 +138,48 @@ shinyServer(function(input, output) {
       
       plot(g1, "neato", edgeAttrs=eAttrs)
       
-      pdf("plot.pdf")
-      plot(g1, "neato", edgeAttrs=eAttrs)
-      dev.off()
-      
-      setProgress(1)
+      #pdf("plot.pdf")
+      #plot(g1, "neato", edgeAttrs=eAttrs)
+      #dev.off()
+
     })
   }, height = 700, width = 700)
   
   
-  #### The Distance Matrix ##########
-  #incProgress(0.1, detail = "Rendering Distance Matrix")
+  #### The Distance Matrix Heatmap ##########
   output$distanceMatrix <- renderPlot({
-    M  <- distMatrix()
-    #Heatmap(M, show_row_hclust = F, show_column_hclust = F, name = "Language Distance")
-    pheatmap(M,treeheight_row = 0, treeheight_col = 0,clustering_method = "single" )
+    withProgress(message = 'PROCESSING...', value = 0.1, {
+      incProgress(0.1, detail = "Calculating lexical distances")
+      M  <- distMatrix()
+      
+      incProgress(0.6, detail = "Drawing heatmap")
+      pheatmap(M,treeheight_row = 0, treeheight_col = 0,clustering_method = "single" )
+    })
+   
   }, height = 500, width = 600 )
   
   
   #### The Dendogram ##########
   #incProgress(0.1, detail = "Rendering Distance Tree")
   output$distanceTree <- renderPlot({
-    M  <- distMatrix()
-    plot(hclust(dist(M),method = "single"), main = "",xlab="",sub="",axes = F, ylab = "")
-    
+    withProgress(message = 'PROCESSING...', value = 0.1, {
+      incProgress(0.1, detail = "Calculating lexical distances")
+      M  <- distMatrix()
+      
+      incProgress(0.6, detail = "Drawing dendogram")
+      plot(hclust(dist(M),method = "single"), main = "",xlab="",sub="",axes = F, ylab = "")
+    })
   }, height = 500, width = 700)
   
   
-  output$downloadPDF <- downloadHandler(
-    filename = function() { 
-      paste(input$file1, '.pdf', sep='') 
-    },
-    content <- function(file) {
-      file.copy("plot.pdf", file)
-    }
-  )
+#   output$downloadPDF <- downloadHandler(
+#     filename = function() { 
+#       paste(input$file1, '.pdf', sep='') 
+#     },
+#     content <- function(file) {
+#       file.copy("plot.pdf", file)
+#     }
+#   )
   
   
   
