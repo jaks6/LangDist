@@ -151,12 +151,12 @@ shinyServer(function(input, output) {
       
       plot(g1, "neato", edgeAttrs=eAttrs)
       
-      #pdf("plot.pdf")
-      #plot(g1, "neato", edgeAttrs=eAttrs)
-      #dev.off()
+      pdf("www/pdfs/plot.pdf")
+      plot(g1, "neato", edgeAttrs=eAttrs)
+      dev.off()
 
     })
-  }, height = 700, width = 700)
+  }, height = 860, width = 860)
   
   
   #### The Distance Matrix Heatmap ##########
@@ -185,14 +185,14 @@ shinyServer(function(input, output) {
   }, height = 500, width = 700)
   
   
-#   output$downloadPDF <- downloadHandler(
-#     filename = function() { 
-#       paste(input$file1, '.pdf', sep='') 
-#     },
-#     content <- function(file) {
-#       file.copy("plot.pdf", file)
-#     }
-#   )
+  output$downloadPDF <- downloadHandler(
+    filename = function() { 
+      paste(input$file1, '.pdf', sep='') 
+    },
+    content <- function(file) {
+      file.copy("www/pdfs/plot.pdf", file)
+    }
+  )
   
   
   

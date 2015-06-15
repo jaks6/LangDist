@@ -49,11 +49,26 @@ shinyUI(fluidPage(theme = "bootstrap.css",
         tabsetPanel(type = "tabs", 
                     tabPanel("Data", tableOutput("data"),align="center"), 
                     tabPanel("Distance Graph", 
-                             #downloadButton('downloadPDF', 'Download PDF version (higher resolution)'),
+                             conditionalPanel("!output.distanceGraph",
+                                              p("Processing, please wait. When using Longest Common Subsequence(LCS), large files can take a while (even minutes!)")
+                                              ),
+                             conditionalPanel("output.distanceGraph",
+                               downloadButton('downloadPDF', 'Download PDF version (higher resolution)')
+                             ),
                              plotOutput("distanceGraph")
                              ), 
-                    tabPanel("Distance Matrix", plotOutput("distanceMatrix"),align="center"),
-                    tabPanel("Distance Tree", plotOutput("distanceTree"),align="center")
+                    tabPanel("Distance Matrix", 
+                             conditionalPanel("!distanceMatrix",
+                                              p("Processing, please wait. When using Longest Common Subsequence(LCS), large files can take a while (even minutes!)")
+                                              ),
+                             plotOutput("distanceMatrix"),
+                             align="center"),
+                    tabPanel("Distance Tree", 
+                             conditionalPanel("!distanceTree",
+                                              p("Processing, please wait. When using Longest Common Subsequence(LCS), large files can take a while (even minutes!)")
+                             ),
+                             plotOutput("distanceTree")
+                             ,align="center")
         )
       )
       
