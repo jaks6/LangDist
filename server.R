@@ -12,10 +12,13 @@ shinyServer(function(input, output) {
   
   ## This function reads the input file and returns the matrix of distances
   create_distance_matrix  <- function(inFile){
+    
+    start.time <- Sys.time();
+    
     if (is.null(inFile))
       return(NULL)
     
-    #incProgress(0.1,detail ="Loading data")
+    
     data <- as.matrix(read.csv(inFile$datapath,sep=input$sep,header=input$header,encoding="GBK",stringsAsFactors=FALSE))
     
     textPreprocessor  <- function (x){
@@ -49,44 +52,54 @@ shinyServer(function(input, output) {
       return(LCS(unlist(x),unlist(y))$LLCS)
     }
     
-    ## A function which uses multiple distance measures 
-    ## for creating a list of language distances
-    combinedDists  <- function(file, lv_ratio, lcs_ratio){   
-      lv_dists  <- lcs_dists  <- 0
+    combinedDistsMatrix <- function(file, lv_ratio, lcs_ratio){   
+      ### Applies given function to all pairs in argument "file"; returns a matrix
+      ## where the upper triangle containts the results
+      applyToMatrix <- function(file, fun){
+        M  <- matrix(0, nrow = length(file), ncol = length(file))
+        for (i in 1:(nrow(M)-1)){
+          for (j in (i+1):nrow(M)){
+            M[i,j]  <- fun(file[[i]],file[[j]])
+          }
+        }
+        return(M)
+      }
       
+      LV_mat  <- LCS_mat  <- 0
       if(lv_ratio > 0){
-      lv_dists <- unlist( lapply(seq(1:length(file)), function(x){
-        lapply(seq(1:length(file)), function(y) standardDist(file[[x]],file[[y]]))
-      }))
-      lv_dists[which(lv_dists>0)]  <-  range1to10(lv_dists[which(lv_dists>0)]) #The lower, the better for LV
+        LV_mat  <- applyToMatrix(file, standardDist)
+        LV_mat[upper.tri(LV_mat)] <- range1to10(LV_mat[upper.tri(LV_mat)]) # Higher scores are better
       }
       if(lcs_ratio > 0){
-      lcs_dists <- unlist( lapply(seq(1:length(file)), function(x){
-        lapply(seq(1:length(file)), function(y) LLCS(file[[x]],file[[y]]))
-      }))
-      lcs_dists[which(lcs_dists>0)]  <- 11 - range1to10(lcs_dists[which(lcs_dists>0)]) # Higher scores are better
+        LCS_mat  <- applyToMatrix(file, LLCS)
+        LCS_mat[upper.tri(LCS_mat)]  <-  11 - range1to10(LCS_mat[upper.tri(LCS_mat)]) #The lower, the better for LV
       }
-            
-      return( lv_ratio * lv_dists + lcs_ratio * lcs_dists)
+      ## Combine the distance measures:
+      M  <- ( lv_ratio * LV_mat + lcs_ratio * LCS_mat)
+      ## reflect the upper triangle: obtain a symmetric matrix
+      M  <- t(M) + M
+      dimnames(M)  <- list(colnames(data),colnames(data))
+      return(M)
     }
-    
+
 
     ##Construct a language-language matrix    
     distance_mode <- reactive({return(input$dist) })
-    if (distance_mode() =="lv"){dists  <- combinedDists(data,1,0); print("LV")}
-    else if (distance_mode() =="comb"){dists  <- combinedDists(data,0.4,0.6); print("COMBO")}
-    else if (distance_mode() =="lcs"){dists  <- combinedDists(data,0,1); print("LCS")}
+    if (distance_mode() =="lv"){M  <- combinedDistsMatrix(data,1,0); print("LV")}
+    else if (distance_mode() =="comb"){M  <- combinedDistsMatrix(data,0.4,0.6); print("COMBO")}
+    else if (distance_mode() =="lcs"){M  <- combinedDistsMatrix(data,0,1); print("LCS")}
     
-    M  <- matrix(dists, ncol=length(colnames(data)), nrow=length(colnames(data)), dimnames = list(colnames(data),colnames(data)))    
-    
+    #M  <- matrix(dists, ncol=length(colnames(data)), nrow=length(colnames(data)), dimnames = list(colnames(data),colnames(data)))    
+    end.time <- Sys.time();
+    time.taken <- end.time - start.time
+    print(time.taken)
     return(M)
   }
   
   ##Define the distance matrix as reactive, such that whenever the input changes,
   ## Any plots, etc that use the matrix will also be updated.
   distMatrix  <- reactive(
-    create_distance_matrix(input$file1)
-    
+    create_distance_matrix(input$file1)  
 )
   
   
