@@ -93,8 +93,15 @@ shinyServer(function(input, output) {
     end.time <- Sys.time();
     time.taken <- end.time - start.time
     print(time.taken)
+    output$executiontime  <- (time.taken)
+    cat("Hello world!\n" , file = stderr())
     return(M)
   }
+  
+  # Show the values using an HTML table
+  #output$executiontime <- renderTable({
+   # sliderValues()
+  #})
   
   ##Define the distance matrix as reactive, such that whenever the input changes,
   ## Any plots, etc that use the matrix will also be updated.

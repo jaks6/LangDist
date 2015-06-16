@@ -4,24 +4,36 @@ shinyUI(fluidPage(theme = "bootstrap.css",
   titlePanel("Upload a dataset"),
   sidebarLayout(
     sidebarPanel(
-      fileInput('file1', 'Choose CSV File',
+      fileInput('file1', 'Choose Dataset CSV File',
                 accept=c('text/csv', 
                          'text/comma-separated-values,text/plain', 
                          '.csv')),
-      tags$hr(),
+      #tags$hr(),
       checkboxInput('header', 'Header', TRUE),
-      radioButtons('sep', 'Separator',
+      radioButtons('sep', 'Separator:',
                    c(Comma=',',
                      Semicolon=';',
                      Tab='\t'),
                    ';'),
-      tags$hr(),
+      #tags$hr(),
       p('No language dataset at hand? You can use the following datasets,',
-        'First, save files to computer and then upload',
-        a(href = 'FinnoUgric.csv', 'Finno Ugric Dataset'), 'or',
-        a(href = 'GenesisSet.csv', 'Genesis Dataset'),'.','Note: Larger files require more time when calculating distances.'
-      ),
-      tags$hr(),
+        '\nFirst, save files to computer and then upload. (Note that larger datasets take more time)'),
+      
+      tags$ul(class="examplelist",
+        list(
+          tags$li(
+            a(href = 'FinnoUgric.csv', 'Finno Ugric Dataset'),
+            '(Small Dataset)'
+            ),
+          tags$li(
+            a(href = 'DrStrangeloveSubtitles.csv', 'Dr. Strangelove Subtitles Dataset'),
+            '(Medium file, 13 languages, ~250 characters per language)'
+            ),
+          tags$li(a(href = 'GenesisSet.csv', 'Genesis Dataset')
+                  , '(Large file, 20 languages, ~4000 characters per language)'
+            )
+          )),
+  
       tags$hr(),
       
       # Decimal interval with step value
@@ -36,7 +48,9 @@ shinyUI(fluidPage(theme = "bootstrap.css",
       
       ## INTRODUCTORY MESSAGE PANEL. HIDDEN WHEN A FILE IS UPLOADED!
       conditionalPanel("!output.fileUploaded",
-                       p("Welcome to the Language Distance Analyzr web application. This application was developed within the framework of the data-mining course (MTAT.03.183) at the University of Tartu. This tool offers a simple-to-use interface for students, researches and interested persons to concurrently analyze and visualize the lexical similarity of multiple entities such as languages. "),
+                       h4(p("Welcome to the Language Distance Analyzer web application.")),
+                      p(tags$em("This application was developed as part of the data-mining course (MTAT.03.183) at the University of Tartu.")),
+                        p("This tool offers a simple-to-use interface for students, researches and interested persons to concurrently analyze and visualize the lexical similarity of multiple entities such as languages. "),
 						p("To get started, please upload a suitable dataset using the form on the left. "),
 						p("For more information on the project including algorithm and source code check out the "), a("Github repository.", href="https://github.com/jaks6/LangDist")
 						 
@@ -45,6 +59,7 @@ shinyUI(fluidPage(theme = "bootstrap.css",
       
       ## ANALYSIS PANEL. ONLY VISIBLE ONCE A FILE HAS BEEN UPLOADED
       conditionalPanel("output.fileUploaded",
+                       p(textOutput("executiontime")),
                        
         tabsetPanel(type = "tabs", 
                     tabPanel("Data", tableOutput("data"),align="center"), 
