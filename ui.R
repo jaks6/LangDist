@@ -17,19 +17,19 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                    ';'),
       #tags$hr(),
       p('No language dataset at hand? You can use the following datasets,',
-        '\nFirst, save files to computer and then upload. (Note that larger datasets take more time)'),
+        '\nFirst, save files to computer and then and upload. (Note that larger datasets take more time)'),
       
       tags$ul(class="examplelist",
         list(
           tags$li(
-            a(href = 'FinnoUgric.csv', 'Finno Ugric Dataset'),
+            a(href = 'FinnoUgric.csv', target="_blank", 'Finno Ugric Dataset'),
             '(Small Dataset)'
             ),
           tags$li(
-            a(href = 'DrStrangeloveSubtitles.csv', 'Dr. Strangelove Subtitles Dataset'),
+            a(href = 'DrStrangeloveSubtitles.csv',  target="_blank",'Dr. Strangelove Subtitles Dataset'),
             '(Medium file, 13 languages, ~250 characters per language)'
             ),
-          tags$li(a(href = 'GenesisSet.csv', 'Genesis Dataset')
+          tags$li(a(href = 'GenesisSet.csv', target="_blank",'Genesis Dataset')
                   , '(Large file, 20 languages, ~4000 characters per language)'
             )
           )),
