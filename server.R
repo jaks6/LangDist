@@ -8,17 +8,14 @@ library(stringi)
 library(qualV) #For LCS
 
 shinyServer(function(input, output) {
-  
+  # A temp file to save the pdf
+  outfile <- tempfile(pattern="distance_graph_", tmpdir="www/pdfs", fileext='.pdf')
   
   ## This function reads the input file and returns the matrix of distances
   create_distance_matrix  <- function(inFile){
+    if (is.null(inFile)) return(NULL)
     
-    start.time <- Sys.time();
-    
-    if (is.null(inFile))
-      return(NULL)
-    
-    
+    start.time  <- Sys.time()
     data <- as.matrix(read.csv(inFile$datapath,sep=input$sep,header=input$header,encoding="GBK",stringsAsFactors=FALSE))
     
     textPreprocessor  <- function (x){
@@ -36,9 +33,8 @@ shinyServer(function(input, output) {
       return(sum(distances))
     }
     range1to10 <- function(x){1+((x-min(x))*9/(max(x)-min(x)))}
-    range0to1  <- function(x){ 1-  (x-min(x)) / (max(x)- min(x))}
-    
-    
+    #range0to1  <- function(x){ 1-  (x-min(x)) / (max(x)- min(x))}
+        
     ## Takes two languages and returns the length of the longest common subsequence
     LLCS <- function(x,y){
       ## Join the lines into one big string
@@ -154,7 +150,7 @@ shinyServer(function(input, output) {
       
       plot(g1, "neato", edgeAttrs=eAttrs)
       
-      pdf("www/pdfs/plot.pdf")
+      pdf(outfile)
       plot(g1, "neato", edgeAttrs=eAttrs)
       dev.off()
 
@@ -188,12 +184,13 @@ shinyServer(function(input, output) {
   }, height = 500, width = 700)
   
   
-  output$downloadPDF <- downloadHandler(
+  output$downloadPDF <- downloadHandler(    
     filename = function() { 
       paste(input$file1, '.pdf', sep='') 
     },
     content <- function(file) {
-      file.copy("www/pdfs/plot.pdf", file)
+      file.copy(outfile, file)
+      file.remove(outfile)
     }
   )
   

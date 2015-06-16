@@ -17,7 +17,7 @@ shinyUI(fluidPage(theme = "bootstrap.css",
                    ';'),
       #tags$hr(),
       p('No language dataset at hand? You can use the following datasets,',
-        '\nFirst, save files to computer and then and upload. (Note that larger datasets take more time)'),
+        '\nFirst, save files to computer and then upload. (Note that larger datasets take more time)'),
       
       tags$ul(class="examplelist",
         list(
