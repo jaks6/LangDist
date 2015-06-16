@@ -82,19 +82,15 @@ shinyServer(function(input, output) {
       return(M)
     }
 
-
     ##Construct a language-language matrix    
     distance_mode <- reactive({return(input$dist) })
     if (distance_mode() =="lv"){M  <- combinedDistsMatrix(data,1,0); print("LV")}
     else if (distance_mode() =="comb"){M  <- combinedDistsMatrix(data,0.4,0.6); print("COMBO")}
     else if (distance_mode() =="lcs"){M  <- combinedDistsMatrix(data,0,1); print("LCS")}
     
-    #M  <- matrix(dists, ncol=length(colnames(data)), nrow=length(colnames(data)), dimnames = list(colnames(data),colnames(data)))    
     end.time <- Sys.time();
     time.taken <- end.time - start.time
     print(time.taken)
-    output$executiontime  <- (time.taken)
-    cat("Hello world!\n" , file = stderr())
     return(M)
   }
   
