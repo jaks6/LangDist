@@ -1,3 +1,5 @@
+A simple-to-use lexical analysis tool for students, researchers and interested persons to concurrently analyze and visualize the lexical similarity of multiple entities such as languages, implemented using R and Shiny. 
+
 #Introduction
 The goal of this project was to explore the similarity of different languages based on lexical distances and visualize the results in a meaningful way. We further developed a web application and deployed it using the web application framework "Shiny" by Rstudio. The web app is available under: http://kodu.ut.ee/~jaks/langdist 
 
