@@ -1,4 +1,4 @@
-# A simple-to-use lexical analysis tool for students, researchers and interested persons to concurrently analyze and visualize the lexical similarity of multiple entities such as languages, implemented using R and Shiny. 
+## A simple-to-use lexical analysis tool for students, researchers and interested persons to concurrently analyze and visualize the lexical similarity of multiple entities such as languages, implemented using R and Shiny. 
 
 # Introduction
 The goal of this project was to explore the similarity of different languages based on lexical distances and visualize the results in a meaningful way. We further developed a web application and deployed it using the web application framework "Shiny" by Rstudio. The web app is available under: http://kodu.ut.ee/~jaks/langdist 
@@ -12,7 +12,7 @@ We replaced all language-specific special characters with similar, more general 
 For a more reliable algorithm, we combined both the normalized Damerau-Levenshtein distance and the length of the longest common subsequence to create an ensemble on a 40-60 basis, that is, 40% of the final distance score is attributed to the Damerau-Levenshtein measure and 60% is attributed to LCS.
 
 
-# License
+## License
 Copyright (c) 2015, Jakob Mass; Johann Lutterodt
 All rights reserved.
 
